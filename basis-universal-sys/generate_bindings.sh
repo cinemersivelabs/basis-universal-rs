@@ -93,6 +93,10 @@ bindgen vendor/encoding_wrapper.cpp -o src/encoding_bindings.rs \
   --allowlist-function compressor_params_set_rdo_uastc_quality_scalar \
   --allowlist-function compressor_params_set_generate_mipmaps \
   --allowlist-function compressor_params_set_mip_smallest_dimension \
+  --allowlist-function compressor_params_set_create_ktx2_file \
+  --allowlist-function compressor_params_set_ktx2_uastc_supercompression \
+  --allowlist-function compressor_params_set_ktx2_zstd_supercompression_level \
+  --allowlist-function compressor_params_set_ktx2_srgb_transfer_func \
   --allowlist-function compressor_params_set_userdata \
   \
   --allowlist-function compressor_new \
@@ -100,6 +104,7 @@ bindgen vendor/encoding_wrapper.cpp -o src/encoding_bindings.rs \
   --allowlist-function compressor_init \
   --allowlist-function compressor_process \
   --allowlist-function compressor_get_output_basis_file \
+  --allowlist-function compressor_get_output_ktx2_file \
   \
   --allowlist-function compressor_get_basis_file_size \
   --allowlist-function compressor_get_basis_bits_per_texel \

@@ -20,6 +20,14 @@ pub enum CompressorErrorCode {
         sys::basisu_basis_compressor_error_code_cECFailedUASTCRDOPostProcess,
 }
 
+impl std::error::Error for CompressorErrorCode {}
+
+impl std::fmt::Display for CompressorErrorCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 impl Into<sys::basisu_basis_compressor_error_code> for CompressorErrorCode {
     fn into(self) -> sys::basisu_basis_compressor_error_code {
         self as sys::basisu_basis_compressor_error_code
@@ -84,6 +92,14 @@ impl Compressor {
     pub fn basis_file(&self) -> &[u8] {
         unsafe {
             let result = sys::compressor_get_output_basis_file(self.0);
+            std::slice::from_raw_parts(result.pData, result.length as usize)
+        }
+    }
+
+    /// Access the compressed data. May be empty if `process()` was not yet called
+    pub fn ktx2_file(&self) -> &[u8] {
+        unsafe {
+            let result = sys::compressor_get_output_ktx2_file(self.0);
             std::slice::from_raw_parts(result.pData, result.length as usize)
         }
     }

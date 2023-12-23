@@ -325,6 +325,34 @@ impl CompressorParams {
             sys::compressor_params_set_no_endpoint_rdo(self.0, true);
         }
     }
+    
+    pub fn set_output_to_basisu(&mut self) {
+        unsafe {
+            sys::compressor_params_set_create_ktx2_file(self.0, false);
+        }
+    }
+
+    pub fn set_output_to_ktx2(&mut self) {
+        unsafe {
+            sys::compressor_params_set_create_ktx2_file(self.0, true);
+        }
+    }
+
+    pub fn set_ktx2_supercompression(&mut self, supercompression: Ktx2Supercompression) {
+        unsafe {
+            sys::compressor_params_set_ktx2_uastc_supercompression(self.0, match supercompression {
+                Ktx2Supercompression::None => sys::basist_ktx2_supercompression_KTX2_SS_NONE,
+                Ktx2Supercompression::BasisLZ => sys::basist_ktx2_supercompression_KTX2_SS_BASISLZ,
+                Ktx2Supercompression::ZStd => sys::basist_ktx2_supercompression_KTX2_SS_ZSTANDARD,
+            });
+        }
+    }
+
+    pub fn set_ktx2_zstd_supercompression_level(&mut self, level: i32) {
+        unsafe {
+            sys::compressor_params_set_ktx2_zstd_supercompression_level(self.0, level);
+        }
+    }
 
     // set_multithreaded not implemented here as this is controlled by thread count passed to
     // `Compressor::new()`
@@ -336,4 +364,10 @@ impl Drop for CompressorParams {
             sys::compressor_params_delete(self.0);
         }
     }
+}
+
+pub enum Ktx2Supercompression {
+    None,
+    BasisLZ,
+    ZStd,
 }

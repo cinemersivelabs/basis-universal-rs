@@ -228,6 +228,22 @@ extern "C" {
         params->pParams->m_mip_smallest_dimension = mip_smallest_dimension;
     }
 
+    void compressor_params_set_create_ktx2_file(CompressorParams *params, bool create_ktx2_file) {
+        params->pParams->m_create_ktx2_file = create_ktx2_file;
+    }
+
+    void compressor_params_set_ktx2_uastc_supercompression(CompressorParams *params, basist::ktx2_supercompression supercompression) {
+        params->pParams->m_ktx2_uastc_supercompression = supercompression;
+    }
+
+    void compressor_params_set_ktx2_zstd_supercompression_level(CompressorParams *params, int level) {
+        params->pParams->m_ktx2_zstd_supercompression_level = level;
+    }
+
+    void compressor_params_set_ktx2_srgb_transfer_func(CompressorParams *params, bool ktx2_srgb_transfer_func) {
+        params->pParams->m_ktx2_srgb_transfer_func = ktx2_srgb_transfer_func;
+    }
+
     void compressor_params_set_userdata(CompressorParams *params, uint32_t userdata0, uint32_t userdata1) {
         params->pParams->m_userdata0 = userdata0;
         params->pParams->m_userdata1 = userdata1;
@@ -252,7 +268,7 @@ extern "C" {
     Compressor *compressor_new(int num_threads) {
         Compressor *compressor = new Compressor;
         compressor->pCompressor = new basisu::basis_compressor();
-        compressor->pJobPool = new basisu::job_pool(num_threads);
+        compressor->pJobPool = new basisu::job_pool(static_cast<uint32_t>(num_threads));
         return compressor;
     };
 
@@ -286,6 +302,19 @@ extern "C" {
         const basisu::uint8_vec &basis_file = compressor->pCompressor->get_output_basis_file();
         file.pData = basis_file.data();
         file.length = basis_file.size();
+        return file;
+    }
+
+    struct CompressorKtx2File {
+        const uint8_t *pData;
+        size_t length;
+    };
+
+    CompressorKtx2File compressor_get_output_ktx2_file(Compressor *compressor) {
+        CompressorKtx2File file;
+        const basisu::uint8_vec &ktx2_file = compressor->pCompressor->get_output_ktx2_file();
+        file.pData = ktx2_file.data();
+        file.length = ktx2_file.size();
         return file;
     }
 
