@@ -6,12 +6,9 @@ fn build_with_common_settings() -> cc::Build {
         build
             .flag_if_supported("-fvisibility=hidden")
             .flag_if_supported("-fno-strict-aliasing")
-            .flag_if_supported("-Wall")
-            .flag_if_supported("-Wextra")
-            .flag_if_supported("-Wno-unused-local-typedefs")
-            .flag_if_supported("-Wno-unused-value")
-            .flag_if_supported("-Wno-unused-parameter")
-            .flag_if_supported("-Wno-unused-variable");
+            .flag_if_supported("-Wno-everything");
+    } else {
+        build.flag_if_supported("/w");
     }
 
     build
@@ -20,10 +17,14 @@ fn build_with_common_settings() -> cc::Build {
 fn main() {
     let mut build = build_with_common_settings();
 
+    build.define("BASISU_SUPPORT_SSE", "1");
+
     if build.get_compiler().is_like_msvc() {
-        build.define("BASISU_SUPPORT_SSE", "1");
+        build.flag_if_supported("/arch:AVX");
     } else {
-        build.std("c++11").define("BASISU_SUPPORT_SSE", "0");
+        build
+            .std("c++11")
+            .flag_if_supported("-msse4.2");
     }
 
     build
