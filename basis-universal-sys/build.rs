@@ -1,3 +1,5 @@
+use std::env;
+
 // args from the basis cmake file
 fn build_with_common_settings() -> cc::Build {
     let mut build = cc::Build::new();
@@ -17,14 +19,22 @@ fn build_with_common_settings() -> cc::Build {
 fn main() {
     let mut build = build_with_common_settings();
 
-    build.define("BASISU_SUPPORT_SSE", "1");
+    if !build.get_compiler().is_like_msvc() {
+        build.std("c++11");
+    }
 
-    if build.get_compiler().is_like_msvc() {
-        build.flag_if_supported("/arch:AVX");
+    if env::var("TARGET")
+        .map(|target| target.starts_with("x86_64"))
+        .unwrap_or_default()
+    {
+        build.define("BASISU_SUPPORT_SSE", "1");
+        if build.get_compiler().is_like_msvc() {
+            build.flag_if_supported("/arch:AVX");
+        } else {
+            build.flag_if_supported("-msse4.2");
+        }
     } else {
-        build
-            .std("c++11")
-            .flag_if_supported("-msse4.2");
+        build.define("BASISU_SUPPORT_SSE", "0");
     }
 
     build
