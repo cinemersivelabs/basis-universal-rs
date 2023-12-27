@@ -23,7 +23,10 @@ pub enum CompressorErrorCode {
 impl std::error::Error for CompressorErrorCode {}
 
 impl std::fmt::Display for CompressorErrorCode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(
+        &self,
+        f: &mut std::fmt::Formatter<'_>,
+    ) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
